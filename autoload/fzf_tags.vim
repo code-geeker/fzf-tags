@@ -33,6 +33,7 @@ function! fzf_tags#Find(identifier)
     execute 'tag' identifier
   else
     let expect_keys = join(keys(s:actions), ',')
+    let preview_source_cmd = join(s:preview_cmd, ' ')
     " call fzf#run({
     " \   'source': source_lines,
     " \   'sink*':   function('s:sink', [identifier]),
@@ -43,7 +44,7 @@ function! fzf_tags#Find(identifier)
     call fzf#run({
           \ 'source': source_lines,
           \ 'sink*':   function('s:sink', [identifier]),
-          \ 'options': s:preview_source_cmd . '--expect=' . expect_keys . ' --with-nth 1,2 --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
+          \ 'options': preview_source_cmd . '--expect=' . expect_keys . ' --with-nth 1,2 --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
           \ 'window': { 'width': 0.9, 'height': 0.9 }})
   endif
 endfunction

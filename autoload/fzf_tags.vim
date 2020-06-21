@@ -5,6 +5,17 @@ let s:actions = {
   \ 'ctrl-x': 'split',
   \ 'ctrl-v': 'vsplit' }
 
+let s:preview_cmd = [
+  \ '--bind ctrl-e:preview-down,ctrl-y:preview-up,ctrl-u:preview-page-up,ctrl-d:preview-page-down,tab:toggle+up,shift-tab:toggle+down '
+  \ '--preview="',
+  \ 'bat ',
+  \ '--number',
+  \ '--color always',
+  \ '--theme Dracula',
+  \ '--line-range {4}:',
+  \ '--highlight-line {3} {2}"'
+  \ ]
+
 function! fzf_tags#FindCommand(identifier)
   return fzf_tags#Find(empty(a:identifier) ? expand('<cword>') : a:identifier)
 endfunction
@@ -29,12 +40,11 @@ function! fzf_tags#Find(identifier)
     " \   'down': '40%',
     " \ })
 
-  let l:fzf_files_options = '--preview "bat --number --theme="Dracula" --style=changes,grid --color always {3..-1} | head -200" ' . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "'
-  call fzf#run({
-        \   'source': source_lines,
-     \   'sink*':   function('s:sink', [identifier]),
-        \ 'options': ' --bind ctrl-e:preview-down,ctrl-y:preview-up,ctrl-u:preview-page-up,ctrl-d:preview-page-down,tab:toggle+up,shift-tab:toggle+down ' . l:fzf_files_options,
-        \ 'window': { 'width': 0.9, 'height': 0.9 }})
+    call fzf#run({
+          \ 'source': source_lines,
+          \ 'sink*':   function('s:sink', [identifier]),
+          \ 'options': s:preview_source_cmd . '--expect=' . expect_keys . ' --with-nth 1,2 - --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
+          \ 'window': { 'width': 0.9, 'height': 0.9 }})
   endif
 endfunction
 

@@ -68,7 +68,7 @@ function! s:tag_to_string(index, tag_dict)
   if has_key(a:tag_dict, 'line')
     call add(components, s:green(a:tag_dict['line']))
     call add(components, s:green(a:tag_dict['line'] - 8))
-  endif	  endif
+  endif
   return components
 endfunction
 

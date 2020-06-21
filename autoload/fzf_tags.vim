@@ -11,9 +11,7 @@ let s:preview_cmd = [
   \ 'bat ',
   \ '--number',
   \ '--color always',
-  \ '--theme="Dracula"',
-  \ '--line-range {4}:',
-  \ '--highlight-line {3} {2}"'
+  \ '--theme="Dracula"'
   \ ]
 
 function! fzf_tags#FindCommand(identifier)
@@ -34,17 +32,11 @@ function! fzf_tags#Find(identifier)
   else
     let expect_keys = join(keys(s:actions), ',')
     let preview_source_cmd = join(s:preview_cmd, ' ')
-    " call fzf#run({
-    " \   'source': source_lines,
-    " \   'sink*':   function('s:sink', [identifier]),
-    " \   'options': '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
-    " \   'down': '40%',
-    " \ })
 
     call fzf#run({
           \ 'source': source_lines,
           \ 'sink*':   function('s:sink', [identifier]),
-          \ 'options': preview_source_cmd . '--expect=' . expect_keys . ' --with-nth 1,2 --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
+          \ 'options': preview_source_cmd . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
           \ 'window': { 'width': 0.9, 'height': 0.9 }})
   endif
 endfunction
@@ -62,7 +54,7 @@ function! s:source_lines(identifier)
   \   taglist('^' . a:identifier . '$', expand('%:p')),
   \   function('s:tag_to_string')
   \ )
-  return map(s:align_lists(relevant_fields), 'join(v:val, "\t")')
+  return map(s:align_lists(relevant_fields), 'join(v:val, " ")')
 endfunction
 
 function! s:tag_to_string(index, tag_dict)
@@ -71,10 +63,10 @@ function! s:tag_to_string(index, tag_dict)
     call add(components, s:magenta(a:tag_dict['filename']))
   endif
   if has_key(a:tag_dict, 'class')
-    " call add(components, s:green(a:tag_dict['class']))
+    call add(components, s:green(a:tag_dict['class']))
   endif
   if has_key(a:tag_dict, 'cmd')
-    " call add(components, s:red(a:tag_dict['cmd']))
+    call add(components, s:red(a:tag_dict['cmd']))
   endif
   if has_key(a:tag_dict, 'line')
     call add(components, s:green(a:tag_dict['line']))

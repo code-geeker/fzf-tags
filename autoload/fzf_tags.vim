@@ -29,7 +29,7 @@ function! fzf_tags#Find(identifier)
     " \   'down': '40%',
     " \ })
 
-  let l:fzf_files_options = '--preview "bat --theme="Dracula" --style=changes,grid --color always {3..-1} | head -200" ' . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "'
+  let l:fzf_files_options = '--preview "bat --number --theme="Dracula" --style=changes,grid --color always {3..-1} | head -200" ' . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "'
   call fzf#run({
         \   'source': source_lines,
      \   'sink*':   function('s:sink', [identifier]),
@@ -60,11 +60,15 @@ function! s:tag_to_string(index, tag_dict)
     call add(components, s:magenta(a:tag_dict['filename']))
   endif
   if has_key(a:tag_dict, 'class')
-    call add(components, s:green(a:tag_dict['class']))
+    " call add(components, s:green(a:tag_dict['class']))
   endif
   if has_key(a:tag_dict, 'cmd')
-    call add(components, s:red(a:tag_dict['cmd']))
+    " call add(components, s:red(a:tag_dict['cmd']))
   endif
+  if has_key(a:tag_dict, 'line')
+    call add(components, s:green(a:tag_dict['line']))
+    call add(components, s:green(a:tag_dict['line'] - 8))
+  endif	  endif
   return components
 endfunction
 

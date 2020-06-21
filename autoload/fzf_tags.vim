@@ -5,15 +5,6 @@ let s:actions = {
   \ 'ctrl-x': 'split',
   \ 'ctrl-v': 'vsplit' }
 
-let s:preview_cmd = [
-  \ '--bind ctrl-e:preview-down,ctrl-y:preview-up,ctrl-u:preview-page-up,ctrl-d:preview-page-down,tab:toggle+up,shift-tab:toggle+down ',
-  \ '--preview="',
-  \ 'bat ',
-  \ '--number',
-  \ '--color always',
-  \ '--theme="Dracula"'
-  \ ]
-
 function! fzf_tags#FindCommand(identifier)
   return fzf_tags#Find(empty(a:identifier) ? expand('<cword>') : a:identifier)
 endfunction
@@ -31,13 +22,20 @@ function! fzf_tags#Find(identifier)
     execute 'tag' identifier
   else
     let expect_keys = join(keys(s:actions), ',')
-    let preview_source_cmd = join(s:preview_cmd, ' ')
+    " call fzf#run({
+    " \   'source': source_lines,
+    " \   'sink*':   function('s:sink', [identifier]),
+    " \   'options': '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
+    " \   'down': '40%',
+    " \ })
 
-    call fzf#run({
-          \ 'source': source_lines,
-          \ 'sink*':   function('s:sink', [identifier]),
-          \ 'options': preview_source_cmd . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
-          \ 'window': { 'width': 0.9, 'height': 0.9 }})
+  let l:fzf_files_options = '--preview "bat --theme="Dracula" --style=changes,grid --color always {3..-1} | head -200" ' . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "'
+
+  call fzf#run({
+        \   'source': source_lines,
+     \   'sink*':   function('s:sink', [identifier]),
+        \ 'options': ' --bind ctrl-e:preview-down,ctrl-y:preview-up,ctrl-u:preview-page-up,ctrl-d:preview-page-down,tab:toggle+up,shift-tab:toggle+down ' . l:fzf_files_options,
+        \ 'window': { 'width': 0.9, 'height': 0.9 }})
   endif
 endfunction
 
@@ -67,10 +65,6 @@ function! s:tag_to_string(index, tag_dict)
   endif
   if has_key(a:tag_dict, 'cmd')
     call add(components, s:red(a:tag_dict['cmd']))
-  endif
-  if has_key(a:tag_dict, 'line')
-    call add(components, s:green(a:tag_dict['line']))
-    call add(components, s:green(a:tag_dict['line'] - 8))
   endif
   return components
 endfunction

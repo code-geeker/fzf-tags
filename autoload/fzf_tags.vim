@@ -10,6 +10,8 @@ function! fzf_tags#FindCommand(identifier)
 endfunction
 
 function! fzf_tags#Find(identifier)
+  let l:fzf_files_options = '--preview "bat --theme="Dracula" --style=changes,grid --color always {3..-1} | head -200" --expect=ctrl-v,ctrl-x'
+
   let identifier = s:strip_leading_bangs(a:identifier)
   let source_lines = s:source_lines(identifier)
 
@@ -21,12 +23,18 @@ function! fzf_tags#Find(identifier)
     execute 'tag' identifier
   else
     let expect_keys = join(keys(s:actions), ',')
-    call fzf#run({
-    \   'source': source_lines,
-    \   'sink*':   function('s:sink', [identifier]),
-    \   'options': '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
-    \   'down': '40%',
-    \ })
+    " call fzf#run({
+    " \   'source': source_lines,
+    " \   'sink*':   function('s:sink', [identifier]),
+    " \   'options': '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
+    " \   'down': '40%',
+    " \ })
+
+  call fzf#run({
+        \   'source': source_lines,
+     \   'sink*':   function('s:sink', [identifier]),
+        \ 'options': ' --bind ctrl-e:preview-down,ctrl-y:preview-up,ctrl-u:preview-page-up,ctrl-d:preview-page-down,tab:toggle+up,shift-tab:toggle+down ' . l:fzf_files_options,
+        \ 'window': { 'width': 0.9, 'height': 0.9 }})
   endif
 endfunction
 

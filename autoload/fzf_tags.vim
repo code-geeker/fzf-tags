@@ -48,7 +48,7 @@ endfunction
 
 function! s:source_lines(identifier)
   let relevant_fields = map(
-  \   taglist('^' . a:identifier . '$', expand('%:p')),
+  \   taglist('^' . a:identifier . '$', expand('%')),
   \   function('s:tag_to_string')
   \ )
   return map(s:align_lists(relevant_fields), 'join(v:val, " ")')

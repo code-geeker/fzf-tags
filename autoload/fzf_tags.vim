@@ -6,7 +6,7 @@ let s:actions = {
   \ 'ctrl-v': 'vsplit' }
 
 let s:preview_cmd = [
-  \ '--bind ctrl-e:preview-down,ctrl-y:preview-up,ctrl-u:preview-page-up,ctrl-d:preview-page-down,tab:toggle+up,shift-tab:toggle+down '
+  \ '--bind ctrl-e:preview-down,ctrl-y:preview-up,ctrl-u:preview-page-up,ctrl-d:preview-page-down,tab:toggle+up,shift-tab:toggle+down ',
   \ '--preview="',
   \ 'bat ',
   \ '--number',

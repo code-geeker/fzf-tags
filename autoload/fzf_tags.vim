@@ -62,7 +62,7 @@ function! s:source_lines(identifier)
   \   taglist('^' . a:identifier . '$', expand('%:p')),
   \   function('s:tag_to_string')
   \ )
-  return map(s:align_lists(relevant_fields), 'join(v:val, " ")')
+  return map(s:align_lists(relevant_fields), 'join(v:val, "\t")')
 endfunction
 
 function! s:tag_to_string(index, tag_dict)

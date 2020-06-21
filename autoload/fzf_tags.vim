@@ -10,7 +10,6 @@ function! fzf_tags#FindCommand(identifier)
 endfunction
 
 function! fzf_tags#Find(identifier)
-  let l:fzf_files_options = '--preview "bat --theme="Dracula" --style=changes,grid --color always {3..-1} | head -200" --expect=ctrl-v,ctrl-x'
 
   let identifier = s:strip_leading_bangs(a:identifier)
   let source_lines = s:source_lines(identifier)
@@ -30,6 +29,7 @@ function! fzf_tags#Find(identifier)
     " \   'down': '40%',
     " \ })
 
+  let l:fzf_files_options = '--preview "bat --theme="Dracula" --style=changes,grid --color always {3..-1} | head -200" ' . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "'
   call fzf#run({
         \   'source': source_lines,
      \   'sink*':   function('s:sink', [identifier]),

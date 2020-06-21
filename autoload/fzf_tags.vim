@@ -11,7 +11,7 @@ let s:preview_cmd = [
   \ 'bat ',
   \ '--number',
   \ '--color always',
-  \ '--theme Dracula',
+  \ '--theme="Dracula"',
   \ '--line-range {4}:',
   \ '--highlight-line {3} {2}"'
   \ ]
@@ -43,7 +43,7 @@ function! fzf_tags#Find(identifier)
     call fzf#run({
           \ 'source': source_lines,
           \ 'sink*':   function('s:sink', [identifier]),
-          \ 'options': s:preview_source_cmd . '--expect=' . expect_keys . ' --with-nth 1,2 - --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
+          \ 'options': s:preview_source_cmd . '--expect=' . expect_keys . ' --with-nth 1,2 --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
           \ 'window': { 'width': 0.9, 'height': 0.9 }})
   endif
 endfunction

@@ -23,8 +23,9 @@ function! fzf_tags#Find(identifier)
     execute 'tag' identifier
   else
     let expect_keys = join(keys(s:actions), ',')
+    let preview_file =  "~/.config/nvim/autoload/plugged/fzf-tags/bin/preview.sh {3..-1}"
 
-  let l:fzf_files_options = '--preview  "bat  --theme="Dracula" --style=numbers,changes --color always {3..-2}" ' . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "'
+  let l:fzf_files_options = '--preview  "'.preview_file.'" ' . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "'
 
   call fzf#run({
         \   'source': source_lines,
@@ -56,11 +57,11 @@ function! s:tag_to_string(index, tag_dict)
     call add(components, s:green(a:tag_dict['name']))
   endif
   if has_key(a:tag_dict, 'filename')
-    call add(components, a:tag_dict['filename'])
+    call add(components,  join([a:tag_dict['filename'], a:tag_dict['line']], ":"))
   endif
-  if has_key(a:tag_dict, 'line')
-    call add(components, a:tag_dict['line'])
-  endif
+  " if has_key(a:tag_dict, 'line')
+    " call add(components, a:tag_dict['line'])
+  " endif
   if has_key(a:tag_dict, 'class')
     " call add(components, a:tag_dict['class'])
   endif

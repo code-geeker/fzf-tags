@@ -14,6 +14,7 @@ function! fzf_tags#Find(identifier)
   let identifier = s:strip_leading_bangs(a:identifier)
   let source_lines = s:source_lines(identifier)
 
+
   if len(source_lines) == 0
     echohl WarningMsg
     echo 'Tag not found: ' . identifier
@@ -22,14 +23,8 @@ function! fzf_tags#Find(identifier)
     execute 'tag' identifier
   else
     let expect_keys = join(keys(s:actions), ',')
-    " call fzf#run({
-    " \   'source': source_lines,
-    " \   'sink*':   function('s:sink', [identifier]),
-    " \   'options': '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
-    " \   'down': '40%',
-    " \ })
 
-  let l:fzf_files_options = '--preview "bat --theme="Dracula" --style=changes,grid --color always {3..-1} | head -200" ' . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "'
+  let l:fzf_files_options = '--preview  "bat  --theme="Dracula" --style=numbers,changes --color always {3..-2}" ' . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "'
 
   call fzf#run({
         \   'source': source_lines,
@@ -49,7 +44,7 @@ endfunction
 
 function! s:source_lines(identifier)
   let relevant_fields = map(
-  \   taglist('^' . a:identifier . '$', expand('%:p')),
+  \   taglist('^' . a:identifier . '$'),
   \   function('s:tag_to_string')
   \ )
   return map(s:align_lists(relevant_fields), 'join(v:val, " ")')
@@ -57,14 +52,20 @@ endfunction
 
 function! s:tag_to_string(index, tag_dict)
   let components = [a:index + 1]
+  if has_key(a:tag_dict, 'name')
+    call add(components, s:green(a:tag_dict['name']))
+  endif
   if has_key(a:tag_dict, 'filename')
-    call add(components, s:magenta(a:tag_dict['filename']))
+    call add(components, a:tag_dict['filename'])
+  endif
+  if has_key(a:tag_dict, 'line')
+    call add(components, a:tag_dict['line'])
   endif
   if has_key(a:tag_dict, 'class')
-    call add(components, s:green(a:tag_dict['class']))
+    " call add(components, a:tag_dict['class'])
   endif
   if has_key(a:tag_dict, 'cmd')
-    call add(components, s:red(a:tag_dict['cmd']))
+    " call add(components, a:tag_dict['cmd'])
   endif
   return components
 endfunction

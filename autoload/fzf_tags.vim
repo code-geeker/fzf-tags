@@ -57,7 +57,13 @@ function! s:tag_to_string(index, tag_dict)
     call add(components, s:green(a:tag_dict['name']))
   endif
   if has_key(a:tag_dict, 'filename')
-    call add(components,  join([a:tag_dict['filename'], a:tag_dict['line']], ":"))
+    let cwd = getcwd()
+    let idx = strlen(cwd) + 1
+    let filename = a:tag_dict['filename']
+    let fn =  !stridx(filename, cwd) ? strpart(filename, idx) : filename
+
+    call add(components,  join([fn, a:tag_dict['line']], ":"))
+    " call add(components,  join([a:tag_dict['filename'], a:tag_dict['line']], ":"))
   endif
   " if has_key(a:tag_dict, 'line')
     " call add(components, a:tag_dict['line'])

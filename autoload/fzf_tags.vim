@@ -23,7 +23,7 @@ function! fzf_tags#Find(identifier)
     execute 'tag' identifier
   else
     let expect_keys = join(keys(s:actions), ',')
-    let preview_file =  "~/.config/nvim/autoload/plugged/fzf-tags/bin/preview.sh {3..-1}"
+    let preview_file =  "~/.config/nvim/autoload/plugged/fzf-tags/bin/preview.sh {2..-1}"
 
   let l:fzf_files_options = '--preview  "'.preview_file.'" ' . '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "'
 
@@ -52,17 +52,23 @@ function! s:source_lines(identifier)
 endfunction
 
 function! s:tag_to_string(index, tag_dict)
-  let components = [a:index + 1]
-  if has_key(a:tag_dict, 'name')
-    call add(components, s:green(a:tag_dict['name']))
-  endif
+  let components = []
+
+  " if has_key(a:tag_dict, 'name')
+    " call add(components, s:green(a:tag_dict['name']))
+  " endif
   if has_key(a:tag_dict, 'filename')
     let cwd = getcwd()
     let idx = strlen(cwd) + 1
     let filename = a:tag_dict['filename']
     let fn =  !stridx(filename, cwd) ? strpart(filename, idx) : filename
 
-    call add(components,  join([fn, a:tag_dict['line']], ":"))
+    let icon_fn = fnamemodify(fn, ':p:t')
+    let icon = WebDevIconsGetFileTypeSymbol(icon_fn, isdirectory(icon_fn))
+
+    " call add(components, icon)
+
+    call add(components,  printf('%s %s', icon, join([fn, a:tag_dict['line']], ":")))
     " call add(components,  join([a:tag_dict['filename'], a:tag_dict['line']], ":"))
   endif
   " if has_key(a:tag_dict, 'line')
